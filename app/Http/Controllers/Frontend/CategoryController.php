@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    // ক্যাটাগরি তালিকা দেখানোর জন্য মেথড
     public function index()
     {
-        return response()->json(Category::all());
+        $categories = Category::all();
+        return view('categories.index', compact('categories'));
     }
 
+    // নতুন ক্যাটাগরি সংযুক্ত করার জন্য মেথড
     public function store(Request $request)
     {
         $request->validate([
@@ -19,15 +22,18 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $category = Category::create($request->all());
-        return response()->json($category, 201);
+        Category::create($request->all());
+
+        return redirect()->route('categories.index')->with('success', 'Category added successfully!');
     }
 
+    // নির্দিষ্ট ক্যাটাগরি দেখানোর জন্য মেথড
     public function show(Category $category)
     {
-        return response()->json($category);
+        return view('categories.show', compact('category'));
     }
 
+    // ক্যাটাগরি আপডেট করার জন্য মেথড
     public function update(Request $request, Category $category)
     {
         $request->validate([
@@ -36,12 +42,14 @@ class CategoryController extends Controller
         ]);
 
         $category->update($request->all());
-        return response()->json($category);
+
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully!');
     }
 
+    // ক্যাটাগরি ডিলেট করার জন্য মেথড
     public function destroy(Category $category)
     {
         $category->delete();
-        return response()->json(null, 204);
+        return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
     }
 }

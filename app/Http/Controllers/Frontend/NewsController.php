@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
+    // সংবাদ তালিকা দেখানোর জন্য মেথড
     public function index()
     {
-        return response()->json(News::with(['reporter', 'category'])->get());
+        $news = News::with(['reporter', 'category'])->get();
+        return view('news.index', compact('news'));
     }
 
+    // নতুন সংবাদ সংযুক্ত করার জন্য মেথড
     public function store(Request $request)
     {
         $request->validate([
@@ -35,15 +38,18 @@ class NewsController extends Controller
             'status' => 'required|string',
         ]);
 
-        $news = News::create($request->all());
-        return response()->json($news, 201);
+        News::create($request->all());
+
+        return redirect()->route('news.index')->with('success', 'News added successfully!');
     }
 
+    // নির্দিষ্ট সংবাদ দেখানোর জন্য মেথড
     public function show(News $news)
     {
-        return response()->json($news->load(['reporter', 'category']));
+        return view('news.show', compact('news'));
     }
 
+    // সংবাদ আপডেট করার জন্য মেথড
     public function update(Request $request, News $news)
     {
         $request->validate([
@@ -68,12 +74,14 @@ class NewsController extends Controller
         ]);
 
         $news->update($request->all());
-        return response()->json($news);
+
+        return redirect()->route('news.index')->with('success', 'News updated successfully!');
     }
 
+    // সংবাদ ডিলেট করার জন্য মেথড
     public function destroy(News $news)
     {
         $news->delete();
-        return response()->json(null, 204);
+        return redirect()->route('news.index')->with('success', 'News deleted successfully!');
     }
 }

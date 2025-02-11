@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    // ভূমিকা (Role) তালিকা দেখানোর জন্য মেথড
     public function index()
     {
-        return response()->json(Role::all());
+        $roles = Role::all();
+        return view('roles.index', compact('roles'));
     }
 
+    // নতুন ভূমিকা সংযুক্ত করার জন্য মেথড
     public function store(Request $request)
     {
         $request->validate([
@@ -19,15 +22,18 @@ class RoleController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $role = Role::create($request->all());
-        return response()->json($role, 201);
+        Role::create($request->all());
+
+        return redirect()->route('roles.index')->with('success', 'Role added successfully!');
     }
 
+    // নির্দিষ্ট ভূমিকা দেখানোর জন্য মেথড
     public function show(Role $role)
     {
-        return response()->json($role);
+        return view('roles.show', compact('role'));
     }
 
+    // ভূমিকা আপডেট করার জন্য মেথড
     public function update(Request $request, Role $role)
     {
         $request->validate([
@@ -36,12 +42,14 @@ class RoleController extends Controller
         ]);
 
         $role->update($request->all());
-        return response()->json($role);
+
+        return redirect()->route('roles.index')->with('success', 'Role updated successfully!');
     }
 
+    // ভূমিকা ডিলেট করার জন্য মেথড
     public function destroy(Role $role)
     {
         $role->delete();
-        return response()->json(null, 204);
+        return redirect()->route('roles.index')->with('success', 'Role deleted successfully!');
     }
 }
