@@ -7,49 +7,75 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    // ভূমিকা (Role) তালিকা দেখানোর জন্য মেথড
+    // Display a listing of the roles.
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::with('parentRole')->get(); // Eager load the parent role
         return view('roles.index', compact('roles'));
     }
 
-    // নতুন ভূমিকা সংযুক্ত করার জন্য মেথড
+    // Show the form for creating a new role.
+    public function create()
+    {
+        $parentRoles = Role::all(); // Get all roles to select from as parent roles
+        return view('roles.create', compact('parentRoles'));
+    }
+
+    // Store a newly created role in storage.
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name',
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'parent_role_id' => 'nullable|exists:roles,id',
+            'name' => 'required|string|max:255|unique:roles,name',
             'description' => 'nullable|string',
         ]);
 
-        Role::create($request->all());
+        // Create the new role
+        Role::create($validated);
 
-        return redirect()->route('roles.index')->with('success', 'Role added successfully!');
+        // Redirect back with success message
+        return redirect()->route('roles.index')->with('success', 'Role created successfully!');
     }
 
-    // নির্দিষ্ট ভূমিকা দেখানোর জন্য মেথড
+    // Display the specified role.
     public function show(Role $role)
     {
+        $role->load('parentRole'); // Eager load the parent role
         return view('roles.show', compact('role'));
     }
 
-    // ভূমিকা আপডেট করার জন্য মেথড
+    // Show the form for editing the specified role.
+    public function edit(Role $role)
+    {
+        $parentRoles = Role::all(); // Get all available parent roles for updating
+        return view('roles.edit', compact('role', 'parentRoles'));
+    }
+
+    // Update the specified role in storage.
     public function update(Request $request, Role $role)
     {
-        $request->validate([
-            'name' => 'required|unique:roles,name,' . $role->id,
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'parent_role_id' => 'nullable|exists:roles,id',
+            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
             'description' => 'nullable|string',
         ]);
 
-        $role->update($request->all());
+        // Update the role with the validated data
+        $role->update($validated);
 
+        // Redirect back with success message
         return redirect()->route('roles.index')->with('success', 'Role updated successfully!');
     }
 
-    // ভূমিকা ডিলেট করার জন্য মেথড
+    // Remove the specified role from storage.
     public function destroy(Role $role)
     {
+        // Delete the role
         $role->delete();
+
+        // Redirect back with success message
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully!');
     }
 }

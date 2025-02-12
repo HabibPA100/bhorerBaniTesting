@@ -3,85 +3,130 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    // সংবাদ তালিকা দেখানোর জন্য মেথড
+    // Display a listing of the news articles.
     public function index()
     {
-        $news = News::with(['reporter', 'category'])->get();
-        return view('news.index', compact('news'));
+        $news = News::all(); // Retrieve all news articles
+        return view('news.index', compact('news')); // Return the view with the news articles
     }
 
-    // নতুন সংবাদ সংযুক্ত করার জন্য মেথড
+    // Show the form for creating a new news article.
+    public function create()
+    {
+        $categories = Category::all(); // Get all categories
+        $users = User::all(); // Get all users (for reporter selection)
+        return view('news.create', compact('categories', 'users')); // Return the form for creating a news article
+    }
+
+    // Store a newly created news article in storage.
     public function store(Request $request)
     {
-        $request->validate([
-            'thumbnail' => 'required|string',
-            'splash' => 'nullable|string',
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'thumbnail' => 'required|image|mimes:jpg,png,jpeg,gif',
+            'splash' => 'required|image|mimes:jpg,png,jpeg,gif',
             'type' => 'required|in:Breaking,Regular,Headline',
-            'meta' => 'nullable|string|max:256',
-            'division' => 'nullable|string',
-            'district' => 'nullable|string',
-            'subdistrict' => 'nullable|string',
-            'category_1' => 'nullable|string',
-            'category_2' => 'nullable|string',
-            'category_3' => 'nullable|string',
-            'headline' => 'required|string',
-            'subtitle' => 'nullable|string',
+            'meta' => 'required|string|max:256',
+            'division' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'subdistrict' => 'required|string|max:255',
+            'category_1' => 'required|string|max:255',
+            'category_2' => 'nullable|string|max:255',
+            'category_3' => 'nullable|string|max:255',
+            'headline' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
             'content' => 'required|string',
-            'date' => 'nullable|date',
+            'date' => 'required|date',
             'reporter_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
             'published_at' => 'nullable|date',
-            'status' => 'required|string',
+            'status' => 'required|string|max:255',
         ]);
 
-        News::create($request->all());
+        // Handle file uploads (thumbnail, splash)
+        if ($request->hasFile('thumbnail')) {
+            $validated['thumbnail'] = $request->file('thumbnail')->store('images/thumbnails', 'public');
+        }
 
-        return redirect()->route('news.index')->with('success', 'News added successfully!');
+        if ($request->hasFile('splash')) {
+            $validated['splash'] = $request->file('splash')->store('images/splash', 'public');
+        }
+
+        // Create the news article
+        News::create($validated);
+
+        // Redirect back with success message
+        return redirect()->route('news.index')->with('success', 'News article created successfully!');
     }
 
-    // নির্দিষ্ট সংবাদ দেখানোর জন্য মেথড
+    // Display the specified news article.
     public function show(News $news)
     {
-        return view('news.show', compact('news'));
+        return view('news.show', compact('news')); // Display the news article details
     }
 
-    // সংবাদ আপডেট করার জন্য মেথড
+    // Show the form for editing the specified news article.
+    public function edit(News $news)
+    {
+        $categories = Category::all(); // Get all categories
+        $users = User::all(); // Get all users (for reporter selection)
+        return view('news.edit', compact('news', 'categories', 'users')); // Return the form for editing a news article
+    }
+
+    // Update the specified news article in storage.
     public function update(Request $request, News $news)
     {
-        $request->validate([
-            'thumbnail' => 'sometimes|string',
-            'splash' => 'sometimes|string',
-            'type' => 'sometimes|in:Breaking,Regular,Headline',
-            'meta' => 'sometimes|string|max:256',
-            'division' => 'sometimes|string',
-            'district' => 'sometimes|string',
-            'subdistrict' => 'sometimes|string',
-            'category_1' => 'sometimes|string',
-            'category_2' => 'sometimes|string',
-            'category_3' => 'sometimes|string',
-            'headline' => 'sometimes|string',
-            'subtitle' => 'sometimes|string',
-            'content' => 'sometimes|string',
-            'date' => 'sometimes|date',
-            'reporter_id' => 'sometimes|exists:users,id',
-            'category_id' => 'sometimes|exists:categories,id',
-            'published_at' => 'sometimes|date',
-            'status' => 'sometimes|string',
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'thumbnail' => 'nullable|image|mimes:jpg,png,jpeg,gif',
+            'splash' => 'nullable|image|mimes:jpg,png,jpeg,gif',
+            'type' => 'required|in:Breaking,Regular,Headline',
+            'meta' => 'required|string|max:256',
+            'division' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'subdistrict' => 'required|string|max:255',
+            'category_1' => 'required|string|max:255',
+            'category_2' => 'nullable|string|max:255',
+            'category_3' => 'nullable|string|max:255',
+            'headline' => 'required|string|max:255',
+            'subtitle' => 'nullable|string|max:255',
+            'content' => 'required|string',
+            'date' => 'required|date',
+            'reporter_id' => 'required|exists:users,id',
+            'category_id' => 'required|exists:categories,id',
+            'published_at' => 'nullable|date',
+            'status' => 'required|string|max:255',
         ]);
 
-        $news->update($request->all());
+        // Handle file uploads (thumbnail, splash)
+        if ($request->hasFile('thumbnail')) {
+            $validated['thumbnail'] = $request->file('thumbnail')->store('images/thumbnails', 'public');
+        }
 
-        return redirect()->route('news.index')->with('success', 'News updated successfully!');
+        if ($request->hasFile('splash')) {
+            $validated['splash'] = $request->file('splash')->store('images/splash', 'public');
+        }
+
+        // Update the news article
+        $news->update($validated);
+
+        // Redirect back with success message
+        return redirect()->route('news.index')->with('success', 'News article updated successfully!');
     }
 
-    // সংবাদ ডিলেট করার জন্য মেথড
+    // Remove the specified news article from storage.
     public function destroy(News $news)
     {
+        // Delete the news article
         $news->delete();
-        return redirect()->route('news.index')->with('success', 'News deleted successfully!');
+
+        // Redirect back with success message
+        return redirect()->route('news.index')->with('success', 'News article deleted successfully!');
     }
 }
