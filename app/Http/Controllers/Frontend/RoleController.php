@@ -26,7 +26,6 @@ class RoleController extends Controller
     {
         // Validate the incoming request data
         $validated = $request->validate([
-            'parent_role_id' => 'nullable|exists:roles,id',
             'name' => 'required|string|max:255|unique:roles,name',
             'description' => 'nullable|string',
         ]);
@@ -57,7 +56,6 @@ class RoleController extends Controller
     {
         // Validate the incoming request data
         $validated = $request->validate([
-            'parent_role_id' => 'nullable|exists:roles,id',
             'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
             'description' => 'nullable|string',
         ]);

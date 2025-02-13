@@ -44,7 +44,7 @@ class NewsController extends Controller
             'content' => 'required|string',
             'date' => 'required|date',
             'reporter_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
+
             'published_at' => 'nullable|date',
             'status' => 'required|string|max:255',
         ]);
@@ -99,7 +99,7 @@ class NewsController extends Controller
             'content' => 'required|string',
             'date' => 'required|date',
             'reporter_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
+
             'published_at' => 'nullable|date',
             'status' => 'required|string|max:255',
         ]);
