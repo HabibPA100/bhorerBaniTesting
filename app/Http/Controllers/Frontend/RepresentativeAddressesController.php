@@ -27,9 +27,22 @@ class RepresentativeAddressesController extends Controller
     public function store(Request $request, $representative_id)
     {
         $request->validate([
-            'permanent_district' => 'required',
-            'current_district' => 'required',
-            // other validation rules
+            'representative_id' => 'required|exists:representatives,id',
+            'permanent_district' => 'required|string|max:255',
+            'permanent_sub_district' => 'required|string|max:255',
+            'permanent_municipality' => 'required|string|max:255',
+            'permanent_ward' => 'required|string|max:10',
+            'permanent_post_code' => 'required|string|max:10',
+            'permanent_village_locality' => 'required|string|max:255',
+            'permanent_house_road_number' => 'required|string|max:255',
+    
+            'current_district' => 'required|string|max:255',
+            'current_sub_district' => 'required|string|max:255',
+            'current_municipality' => 'required|string|max:255',
+            'current_ward' => 'required|string|max:10',
+            'current_post_code' => 'required|string|max:10',
+            'current_village_locality' => 'required|string|max:255',
+            'current_house_road_number' => 'required|string|max:255',
         ]);
 
         $address = new RepresentativeAddress($request->all());
@@ -58,9 +71,22 @@ class RepresentativeAddressesController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'permanent_district' => 'required',
-            'current_district' => 'required',
-            // other validation rules
+            'representative_id' => 'required|exists:representatives,id',
+            'permanent_district' => 'required|string|max:255',
+            'permanent_sub_district' => 'required|string|max:255',
+            'permanent_municipality' => 'required|string|max:255',
+            'permanent_ward' => 'required|string|max:10',
+            'permanent_post_code' => 'required|string|max:10',
+            'permanent_village_locality' => 'required|string|max:255',
+            'permanent_house_road_number' => 'required|string|max:255',
+    
+            'current_district' => 'required|string|max:255',
+            'current_sub_district' => 'required|string|max:255',
+            'current_municipality' => 'required|string|max:255',
+            'current_ward' => 'required|string|max:10',
+            'current_post_code' => 'required|string|max:10',
+            'current_village_locality' => 'required|string|max:255',
+            'current_house_road_number' => 'required|string|max:255',
         ]);
 
         $address = RepresentativeAddress::findOrFail($id);

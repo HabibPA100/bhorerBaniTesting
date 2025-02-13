@@ -9,7 +9,7 @@ class News extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['thumbnail', 'splash', 'type', 'meta', 'division', 'district', 'subdistrict', 'category_1', 'category_2', 'category_3', 'headline', 'subtitle', 'content', 'date', 'reporter_id', 'category_id', 'published_at', 'status'];
+    protected $fillable = ['thumbnail', 'splash', 'type', 'meta', 'division', 'district', 'subdistrict', 'category_1', 'category_2', 'category_3', 'headline', 'subtitle', 'content', 'date', 'reporter_id', 'published_at', 'status'];
 
     public function reporter()
     {

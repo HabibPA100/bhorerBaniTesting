@@ -26,12 +26,26 @@ class RepresentativesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
+            'user_id' => 'required|exists:users,id',
             'image' => 'required|image',
-            'email' => 'required|email|unique:representatives',
-            'password' => 'required',
-            // other validation rules
+            'email' => 'required|email|unique:representatives,email',
+            'password' => 'required|min:6',
+            'bangla_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
+            'mobile_number' => 'required|string|max:15',
+            'whatsapp_number' => 'nullable|string|max:15',
+            'dob' => 'required|date|before:today',
+            'education_qualifications' => 'required|string|max:1000',
+            'national_id' => 'required|string|max:20',
+            'interested_position' => 'required|string|max:255',
+            'responsible_place_name' => 'required|string|max:255',
+            'accept_terms_conditions' => 'required|boolean',
+            'role_id' => 'required|exists:roles,id',
         ]);
+        
 
         $representative = new Representative($request->all());
 
@@ -65,10 +79,25 @@ class RepresentativesController extends Controller
     {
         $request->validate([
             'user_id' => 'required',
+            'image' => 'nullable|image',
             'email' => 'required|email|unique:representatives,email,' . $id,
-            'password' => 'required',
-            // other validation rules
+            'password' => 'nullable|min:8',
+            'bangla_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
+            'mobile_number' => 'required|string|max:15',
+            'whatsapp_number' => 'nullable|string|max:15',
+            'dob' => 'required|date|before:today',
+            'education_qualifications' => 'required|string|max:1000',
+            'national_id' => 'required|string|max:20',
+            'interested_position' => 'required|string|max:255',
+            'responsible_place_name' => 'required|string|max:255',
+            'accept_terms_conditions' => 'required|boolean',
+            'role_id' => 'required|exists:roles,id',
         ]);
+        
 
         $representative = Representative::findOrFail($id);
         $representative->update($request->all());
