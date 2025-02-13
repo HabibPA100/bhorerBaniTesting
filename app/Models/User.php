@@ -27,7 +27,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class,'role_id');
     }
 
     public function representative()
@@ -40,7 +40,7 @@ class User extends Authenticatable
      */
     public function addresses()
     {
-        return $this->hasManyThrough(RepresentativeAddress::class, Representative::class);
+        return $this->hasOneThrough(RepresentativeAddress::class, Representative::class);
     }
 
 

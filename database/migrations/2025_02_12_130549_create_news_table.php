@@ -23,8 +23,8 @@ return new class extends Migration {
             $table->string('subtitle')->nullable();
             $table->text('content');
             $table->timestamp('date');
-            $table->foreign('reporter_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreignId('reporter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamp('published_at')->nullable();
             $table->string('status');
             $table->timestamps();
